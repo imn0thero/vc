@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chat App</title>
     <style>
         * {
@@ -21,6 +21,13 @@
         .chat-container {
             display: flex;
             height: 100vh;
+            flex-direction: column;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
         }
 
         .sidebar {
@@ -29,14 +36,16 @@
             border-right: 1px solid #e4e6ea;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 15px;
             border-bottom: 1px solid #e4e6ea;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .user-info {
@@ -69,7 +78,7 @@
 
         .online-users {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
 
@@ -105,28 +114,34 @@
             display: flex;
             flex-direction: column;
             background: white;
+            overflow: hidden;
         }
 
         .chat-header {
-            padding: 20px;
+            padding: 15px;
             border-bottom: 1px solid #e4e6ea;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .chat-header h2 {
+            font-size: 1.2rem;
         }
 
         .chat-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: all 0.2s;
         }
 
@@ -147,16 +162,16 @@
 
         .messages-container {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             background: #f8f9fa;
         }
 
         .message {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 8px;
         }
 
         .message.own {
@@ -164,8 +179,8 @@
         }
 
         .message-avatar {
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
@@ -187,9 +202,11 @@
 
         .message-bubble {
             background: white;
-            padding: 12px 15px;
-            border-radius: 18px;
+            padding: 10px 12px;
+            border-radius: 15px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
         .message.own .message-bubble {
@@ -198,12 +215,12 @@
         }
 
         .message-info {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #666;
-            margin-top: 5px;
+            margin-top: 4px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .message.own .message-info {
@@ -211,23 +228,24 @@
         }
 
         .message-input-container {
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid #e4e6ea;
             background: white;
+            flex-shrink: 0;
         }
 
         .message-input-form {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .message-input {
             flex: 1;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 2px solid #e4e6ea;
-            border-radius: 25px;
-            font-size: 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
             outline: none;
             transition: border-color 0.2s;
         }
@@ -240,11 +258,13 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 16px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .send-btn:hover {
@@ -267,7 +287,7 @@
 
         .video-call-container {
             position: relative;
-            width: 80%;
+            width: 90%;
             max-width: 800px;
             height: 60%;
             background: #000;
@@ -283,34 +303,34 @@
 
         .video-local {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 200px;
-            height: 150px;
+            top: 10px;
+            right: 10px;
+            width: 120px;
+            height: 90px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 2px solid white;
         }
 
         .video-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
         .video-btn {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: all 0.2s;
         }
 
@@ -334,84 +354,212 @@
             top: 20px;
             right: 20px;
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 1001;
             display: none;
+            max-width: 80%;
+        }
+
+        .incoming-call h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .incoming-call p {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
         }
 
         .call-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .accept-call, .reject-call {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
         .accept-call {
             background: #42b883;
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
         }
 
         .reject-call {
             background: #ff4757;
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
         }
 
+        /* Mobile Styles */
         @media (max-width: 768px) {
+            .chat-container {
+                height: 100%;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
             .sidebar {
-                width: 250px;
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 1px solid #e4e6ea;
+            }
+            
+            .chat-area {
+                flex: 1;
+                min-height: 0;
+            }
+            
+            .messages-container {
+                padding: 10px;
+            }
+            
+            .message-bubble {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .message-input-container {
+                padding: 10px;
+            }
+            
+            .message-input {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .send-btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .video-call-container {
+                width: 95%;
+                height: 50%;
             }
             
             .video-local {
-                width: 120px;
-                height: 90px;
+                width: 80px;
+                height: 60px;
+            }
+            
+            .video-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-header {
+                padding: 10px;
+            }
+            
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+            
+            .logout-btn {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            
+            .chat-header {
+                padding: 10px;
+            }
+            
+            .chat-header h2 {
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .message-avatar {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .message-bubble {
+                font-size: 0.8rem;
+            }
+            
+            .message-info {
+                font-size: 0.6rem;
+            }
+            
+            .video-call-container {
+                height: 40%;
             }
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <span id="currentUsername"></span>
+        <!-- Sidebar -->
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="user-info">
+                        <div class="user-avatar" id="currentUserAvatar"></div>
+                        <div>
+                            <div id="currentUsername">Loading...</div>
+                            <div style="font-size: 0.8rem; color: #666;">Online</div>
+                        </div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Keluar</button>
                 </div>
-                <button class="logout-btn" onclick="logout()">Keluar</button>
-            </div>
-            
-            <div class="online-users">
-                <h3>Pengguna Online</h3>
-                <div id="onlineUsersList"></div>
-            </div>
-        </div>
-
-        <div class="chat-area">
-            <div class="chat-header">
-                <h2>Chat Room</h2>
-                <div class="chat-actions">
-                    <button class="btn btn-danger" onclick="clearAllMessages()">Hapus Semua Pesan</button>
-                    <button class="btn btn-primary" onclick="showVideoCallOptions()">Video Call</button>
+                
+                <div class="online-users">
+                    <h3>Pengguna Online</h3>
+                    <div id="onlineUsersList"></div>
                 </div>
             </div>
 
-            <div class="messages-container" id="messagesContainer">
-                <!-- Messages will be displayed here -->
-            </div>
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h2>Chat Room</h2>
+                    <div class="chat-actions">
+                        <button class="btn btn-danger" onclick="clearAllMessages()">
+                            🗑️ Hapus
+                        </button>
+                        <button class="btn btn-primary" onclick="startVideoCall()">
+                            📹 Call
+                        </button>
+                    </div>
+                </div>
 
-            <div class="message-input-container">
-                <form class="message-input-form" id="messageForm">
-                    <input type="text" class="message-input" id="messageInput" placeholder="Ketik pesan..." required>
-                    <button type="submit" class="send-btn">Kirim</button>
-                </form>
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages akan ditampilkan di sini -->
+                </div>
+
+                <div class="message-input-container">
+                    <form class="message-input-form" id="messageForm">
+                        <input 
+                            type="text" 
+                            class="message-input" 
+                            id="messageInput" 
+                            placeholder="Ketik pesan Anda..."
+                            maxlength="500"
+                            required
+                        >
+                        <button type="submit" class="send-btn">Kirim</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -423,24 +571,32 @@
             <video id="localVideo" class="video-local" autoplay playsinline muted></video>
             
             <div class="video-controls">
-                <button class="video-btn mute" id="muteBtn" onclick="toggleMute()">🎤</button>
-                <button class="video-btn camera" id="cameraBtn" onclick="toggleCamera()">📹</button>
-                <button class="video-btn end" onclick="endCall()">📞</button>
+                <button class="video-btn mute" id="muteBtn" onclick="toggleMute()">
+                    🎤
+                </button>
+                <button class="video-btn camera" id="cameraBtn" onclick="toggleCamera()">
+                    📹
+                </button>
+                <button class="video-btn end" onclick="endCall()">
+                    📞
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Incoming Call Notification -->
     <div class="incoming-call" id="incomingCall">
-        <h3>Panggilan Masuk</h3>
-        <p id="callerName"></p>
+        <h4>Panggilan Video Masuk</h4>
+        <p id="callerName">Unknown</p>
         <div class="call-actions">
             <button class="accept-call" onclick="acceptCall()">Terima</button>
             <button class="reject-call" onclick="rejectCall()">Tolak</button>
         </div>
     </div>
 
+    <!-- Socket.IO -->
     <script src="/socket.io/socket.io.js"></script>
+    
     <script>
         let socket;
         let currentUser = null;
@@ -448,37 +604,39 @@
         let localStream = null;
         let remoteStream = null;
         let peerConnection = null;
-        let incomingCallData = null;
+        let isCallActive = false;
         let isMuted = false;
         let isCameraOff = false;
+        let incomingCallData = null;
 
-        const servers = {
+        // WebRTC Configuration
+        const rtcConfig = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' }
             ]
         };
 
         // Initialize app
-        async function initApp() {
+        async function init() {
             try {
-                const response = await fetch('/user');
-                if (!response.ok) {
+                const userResponse = await fetch('/user');
+                if (!userResponse.ok) {
                     window.location.href = '/';
                     return;
                 }
                 
-                currentUser = await response.json();
+                currentUser = await userResponse.json();
                 document.getElementById('currentUsername').textContent = currentUser.username;
-                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('currentUserAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
                 
-                // Initialize socket
+                // Initialize Socket.IO
                 socket = io();
-                setupSocketListeners();
+                setupSocketEvents();
                 
-                // Load messages
+                // Load existing messages
                 loadMessages();
                 
-                // Emit user connected
+                // Tell server user is connected
                 socket.emit('userConnected', currentUser);
                 
             } catch (error) {
@@ -487,7 +645,7 @@
             }
         }
 
-        function setupSocketListeners() {
+        function setupSocketEvents() {
             socket.on('userStatusUpdate', (users) => {
                 onlineUsers = users.filter(u => u.id !== currentUser.id);
                 updateOnlineUsersList();
@@ -508,18 +666,19 @@
 
             socket.on('incomingVideoCall', (data) => {
                 incomingCallData = data;
-                document.getElementById('callerName').textContent = `Dari: ${data.fromUsername}`;
+                document.getElementById('callerName').textContent = data.fromUsername;
                 document.getElementById('incomingCall').style.display = 'block';
             });
 
             socket.on('videoCallAnswered', async (data) => {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-                document.getElementById('incomingCall').style.display = 'none';
+                if (peerConnection) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                }
             });
 
             socket.on('videoCallRejected', () => {
                 alert('Panggilan ditolak');
-                cleanupCall();
+                endCall();
             });
 
             socket.on('iceCandidate', async (data) => {
@@ -548,17 +707,17 @@
 
         function displayMessage(message) {
             const container = document.getElementById('messagesContainer');
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
             
-            const timestamp = new Date(message.timestamp).toLocaleString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit',
-                day: '2-digit',
-                month: '2-digit'
+            const timestamp = new Date(message.timestamp);
+            const timeString = timestamp.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
             });
-
-            messageElement.innerHTML = `
+            const dateString = timestamp.toLocaleDateString('id-ID');
+            
+            messageDiv.innerHTML = `
                 <div class="message-avatar">${message.username.charAt(0).toUpperCase()}</div>
                 <div class="message-content">
                     <div class="message-bubble">
@@ -566,35 +725,33 @@
                     </div>
                     <div class="message-info">
                         <span>${message.username}</span>
-                        <span>${timestamp}</span>
+                        <span>•</span>
+                        <span>${timeString}</span>
+                        <span>•</span>
+                        <span>${dateString}</span>
                     </div>
                 </div>
             `;
-
-            container.appendChild(messageElement);
+            
+            container.appendChild(messageDiv);
         }
 
         function updateOnlineUsersList() {
             const container = document.getElementById('onlineUsersList');
             container.innerHTML = '';
-
+            
             onlineUsers.forEach(user => {
-                const userElement = document.createElement('div');
-                userElement.className = 'user-item';
-                userElement.onclick = () => initiateVideoCall(user);
-                
-                userElement.innerHTML = `
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                userDiv.innerHTML = `
                     <div class="user-status"></div>
-                    <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
-                    <span>${user.username}</span>
+                    <div class="user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                        ${user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>${user.username}</div>
                 `;
-
-                container.appendChild(userElement);
+                container.appendChild(userDiv);
             });
-
-            if (onlineUsers.length === 0) {
-                container.innerHTML = '<p style="color: #666; font-size: 0.9rem;">Tidak ada pengguna online</p>';
-            }
         }
 
         function scrollToBottom() {
@@ -608,7 +765,7 @@
             return div.innerHTML;
         }
 
-        // Message sending
+        // Message form handling
         document.getElementById('messageForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('messageInput');
@@ -631,85 +788,102 @@
             }
         }
 
-        // Video call functions
-        function showVideoCallOptions() {
+        // Logout function
+        async function logout() {
+            try {
+                await fetch('/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Video Call Functions
+        async function startVideoCall() {
             if (onlineUsers.length === 0) {
                 alert('Tidak ada pengguna online untuk dipanggil');
                 return;
             }
-            
-            const usersList = onlineUsers.map(u => u.username).join('\n');
-            const username = prompt(`Pilih pengguna untuk video call:\n${usersList}\n\nKetik username:`);
-            
-            if (username) {
-                const targetUser = onlineUsers.find(u => u.username === username);
-                if (targetUser) {
-                    initiateVideoCall(targetUser);
-                } else {
-                    alert('Pengguna tidak ditemukan');
-                }
-            }
-        }
 
-        async function initiateVideoCall(targetUser) {
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+
                 document.getElementById('localVideo').srcObject = localStream;
+                document.getElementById('videoCallModal').style.display = 'flex';
+                isCallActive = true;
+
+                // Create peer connection
+                peerConnection = new RTCPeerConnection(rtcConfig);
                 
-                peerConnection = new RTCPeerConnection(servers);
-                
+                // Add local stream to peer connection
                 localStream.getTracks().forEach(track => {
                     peerConnection.addTrack(track, localStream);
                 });
 
+                // Handle remote stream
                 peerConnection.ontrack = (event) => {
                     remoteStream = event.streams[0];
                     document.getElementById('remoteVideo').srcObject = remoteStream;
                 };
 
+                // Handle ICE candidates
                 peerConnection.onicecandidate = (event) => {
                     if (event.candidate) {
                         socket.emit('iceCandidate', {
-                            targetUserId: targetUser.socketId,
+                            targetUserId: onlineUsers[0].id, // Call first online user
                             candidate: event.candidate
                         });
                     }
                 };
 
+                // Create offer
                 const offer = await peerConnection.createOffer();
                 await peerConnection.setLocalDescription(offer);
 
+                // Send call request to first online user
                 socket.emit('videoCallRequest', {
-                    targetUserId: targetUser.socketId,
+                    targetUserId: onlineUsers[0].id,
                     offer: offer
                 });
 
-                document.getElementById('videoCallModal').style.display = 'flex';
-                
             } catch (error) {
-                console.error('Error initiating video call:', error);
-                alert('Error mengakses kamera/mikrofon');
+                console.error('Error starting video call:', error);
+                alert('Gagal memulai video call. Pastikan kamera dan mikrofon dapat diakses.');
             }
         }
 
         async function acceptCall() {
-            if (!incomingCallData) return;
-
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('incomingCall').style.display = 'none';
+                
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+
                 document.getElementById('localVideo').srcObject = localStream;
+                document.getElementById('videoCallModal').style.display = 'flex';
+                isCallActive = true;
+
+                // Create peer connection
+                peerConnection = new RTCPeerConnection(rtcConfig);
                 
-                peerConnection = new RTCPeerConnection(servers);
-                
+                // Add local stream
                 localStream.getTracks().forEach(track => {
                     peerConnection.addTrack(track, localStream);
                 });
 
+                // Handle remote stream
                 peerConnection.ontrack = (event) => {
                     remoteStream = event.streams[0];
                     document.getElementById('remoteVideo').srcObject = remoteStream;
                 };
 
+                // Handle ICE candidates
                 peerConnection.onicecandidate = (event) => {
                     if (event.candidate) {
                         socket.emit('iceCandidate', {
@@ -719,64 +893,36 @@
                     }
                 };
 
+                // Set remote description and create answer
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
-                
                 const answer = await peerConnection.createAnswer();
                 await peerConnection.setLocalDescription(answer);
 
+                // Send answer
                 socket.emit('videoCallAnswer', {
                     targetUserId: incomingCallData.from,
                     answer: answer
                 });
 
-                document.getElementById('videoCallModal').style.display = 'flex';
-                document.getElementById('incomingCall').style.display = 'none';
-                
             } catch (error) {
                 console.error('Error accepting call:', error);
-                alert('Error mengakses kamera/mikrofon');
-                rejectCall();
+                alert('Gagal menerima panggilan');
             }
         }
 
         function rejectCall() {
+            document.getElementById('incomingCall').style.display = 'none';
             if (incomingCallData) {
                 socket.emit('videoCallReject', {
                     targetUserId: incomingCallData.from
                 });
             }
-            document.getElementById('incomingCall').style.display = 'none';
-            incomingCallData = null;
-        }
-
-        function toggleMute() {
-            if (localStream) {
-                const audioTrack = localStream.getAudioTracks()[0];
-                if (audioTrack) {
-                    audioTrack.enabled = !audioTrack.enabled;
-                    isMuted = !audioTrack.enabled;
-                    document.getElementById('muteBtn').innerHTML = isMuted ? '🔇' : '🎤';
-                }
-            }
-        }
-
-        function toggleCamera() {
-            if (localStream) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                if (videoTrack) {
-                    videoTrack.enabled = !videoTrack.enabled;
-                    isCameraOff = !videoTrack.enabled;
-                    document.getElementById('cameraBtn').innerHTML = isCameraOff ? '📷' : '📹';
-                }
-            }
         }
 
         function endCall() {
-            cleanupCall();
+            isCallActive = false;
             document.getElementById('videoCallModal').style.display = 'none';
-        }
-
-        function cleanupCall() {
+            
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
@@ -787,36 +933,54 @@
                 peerConnection = null;
             }
             
-            remoteStream = null;
-            incomingCallData = null;
+            document.getElementById('localVideo').srcObject = null;
+            document.getElementById('remoteVideo').srcObject = null;
+            
             isMuted = false;
             isCameraOff = false;
-            
-            document.getElementById('muteBtn').innerHTML = '🎤';
-            document.getElementById('cameraBtn').innerHTML = '📹';
+            updateVideoControls();
         }
 
-        // Logout function
-        async function logout() {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                try {
-                    await fetch('/logout', { method: 'POST' });
-                    window.location.href = '/';
-                } catch (error) {
-                    console.error('Error logging out:', error);
-                    window.location.href = '/';
+        function toggleMute() {
+            if (localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                if (audioTrack) {
+                    audioTrack.enabled = !audioTrack.enabled;
+                    isMuted = !audioTrack.enabled;
+                    updateVideoControls();
                 }
             }
         }
 
-        // Initialize app when page loads
-        window.addEventListener('load', initApp);
+        function toggleCamera() {
+            if (localStream) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    videoTrack.enabled = !videoTrack.enabled;
+                    isCameraOff = !videoTrack.enabled;
+                    updateVideoControls();
+                }
+            }
+        }
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            cleanupCall();
-            if (socket) {
-                socket.disconnect();
+        function updateVideoControls() {
+            const muteBtn = document.getElementById('muteBtn');
+            const cameraBtn = document.getElementById('cameraBtn');
+            
+            muteBtn.textContent = isMuted ? '🔇' : '🎤';
+            muteBtn.style.background = isMuted ? '#ff4757' : '#ffa500';
+            
+            cameraBtn.textContent = isCameraOff ? '📹❌' : '📹';
+            cameraBtn.style.background = isCameraOff ? '#ff4757' : '#42b883';
+        }
+
+        // Initialize app when page loads
+        window.addEventListener('load', init);
+
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isCallActive) {
+                // Optional: Handle when user switches tabs during call
             }
         });
     </script>
