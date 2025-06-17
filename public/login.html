@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .auth-switch p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            color: #d63384;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            background: #d1edff;
+            color: #0066cc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1 id="authTitle">Masuk</h1>
+            <p id="authSubtitle">Masuk ke akun Anda untuk melanjutkan chat</p>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <form id="authForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                Masuk
+            </button>
+        </form>
+
+        <div class="auth-switch">
+            <p id="switchText">Belum punya akun?</p>
+            <button type="button" id="switchBtn">Daftar sekarang</button>
+        </div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+        
+        const authForm = document.getElementById('authForm');
+        const authTitle = document.getElementById('authTitle');
+        const authSubtitle = document.getElementById('authSubtitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const switchBtn = document.getElementById('switchBtn');
+        const switchText = document.getElementById('switchText');
+        const messageContainer = document.getElementById('messageContainer');
+
+        function showMessage(message, type = 'error') {
+            messageContainer.innerHTML = `
+                <div class="${type}-message">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                authTitle.textContent = 'Masuk';
+                authSubtitle.textContent = 'Masuk ke akun Anda untuk melanjutkan chat';
+                submitBtn.textContent = 'Masuk';
+                switchText.textContent = 'Belum punya akun?';
+                switchBtn.textContent = 'Daftar sekarang';
+            } else {
+                authTitle.textContent = 'Daftar';
+                authSubtitle.textContent = 'Buat akun baru untuk mulai chat';
+                submitBtn.textContent = 'Daftar';
+                switchText.textContent = 'Sudah punya akun?';
+                switchBtn.textContent = 'Masuk sekarang';
+            }
+            
+            messageContainer.innerHTML = '';
+            authForm.reset();
+        }
+
+        switchBtn.addEventListener('click', toggleAuthMode);
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(authForm);
+            const username = formData.get('username').trim();
+            const password = formData.get('password').trim();
+            
+            if (!username || !password) {
+                showMessage('Username dan password harus diisi');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showMessage('Username minimal 3 karakter');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password minimal 6 karakter');
+                return;
+            }
+            
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'Memproses...';
+            
+            try {
+                const endpoint = isLoginMode ? '/login' : '/signup';
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(
+                        isLoginMode ? 'Login berhasil! Mengalihkan...' : 'Akun berhasil dibuat! Mengalihkan...',
+                        'success'
+                    );
+                    setTimeout(() => {
+                        window.location.href = '/chat';
+                    }, 1500);
+                } else {
+                    showMessage(result.message);
+                }
+            } catch (error) {
+                showMessage('Terjadi kesalahan koneksi');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.textContent = isLoginMode ? 'Masuk' : 'Daftar';
+            }
+        });
+    </script>
+</body>
+</html>
