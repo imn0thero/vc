@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat App</title>
     <style>
         * {
@@ -21,13 +21,7 @@
         .chat-container {
             display: flex;
             height: 100vh;
-            flex-direction: column;
-        }
-
-        .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+            position: relative;
         }
 
         .sidebar {
@@ -36,16 +30,15 @@
             border-right: 1px solid #e4e6ea;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-header {
-            padding: 15px;
+            padding: 20px;
             border-bottom: 1px solid #e4e6ea;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
         }
 
         .user-info {
@@ -78,7 +71,7 @@
 
         .online-users {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
         }
 
@@ -114,35 +107,37 @@
             display: flex;
             flex-direction: column;
             background: white;
-            overflow: hidden;
+            min-width: 0; /* Prevents flex item from overflowing */
         }
 
         .chat-header {
-            padding: 15px;
+            padding: 15px 20px;
             border-bottom: 1px solid #e4e6ea;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .chat-header h2 {
-            font-size: 1.2rem;
+            margin: 0;
         }
 
         .chat-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 6px 12px;
+            padding: 8px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .btn-danger {
@@ -162,16 +157,17 @@
 
         .messages-container {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
             background: #f8f9fa;
+            min-height: 0; /* Allows container to shrink */
         }
 
         .message {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
         }
 
         .message.own {
@@ -179,8 +175,8 @@
         }
 
         .message-avatar {
-            width: 32px;
-            height: 32px;
+            width: 35px;
+            height: 35px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
@@ -202,11 +198,10 @@
 
         .message-bubble {
             background: white;
-            padding: 10px 12px;
-            border-radius: 15px;
+            padding: 12px 15px;
+            border-radius: 18px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
-            word-break: break-word;
+            word-wrap: break-word;
         }
 
         .message.own .message-bubble {
@@ -215,12 +210,13 @@
         }
 
         .message-info {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #666;
-            margin-top: 4px;
+            margin-top: 5px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            flex-wrap: wrap;
         }
 
         .message.own .message-info {
@@ -228,26 +224,27 @@
         }
 
         .message-input-container {
-            padding: 15px;
+            padding: 15px 20px;
             border-top: 1px solid #e4e6ea;
             background: white;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Prevents container from shrinking */
         }
 
         .message-input-form {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
         }
 
         .message-input {
             flex: 1;
-            padding: 10px 12px;
+            padding: 12px 15px;
             border: 2px solid #e4e6ea;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            border-radius: 25px;
+            font-size: 1rem;
             outline: none;
             transition: border-color 0.2s;
+            min-width: 0; /* Allows input to shrink */
         }
 
         .message-input:focus {
@@ -258,11 +255,10 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 20px;
+            padding: 12px 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
             transition: all 0.2s;
             flex-shrink: 0;
         }
@@ -270,6 +266,33 @@
         .send-btn:hover {
             background: #5a6fd8;
             transform: scale(1.05);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
         }
 
         .video-call-modal {
@@ -289,7 +312,7 @@
             position: relative;
             width: 90%;
             max-width: 800px;
-            height: 60%;
+            height: 70%;
             background: #000;
             border-radius: 10px;
             overflow: hidden;
@@ -303,34 +326,34 @@
 
         .video-local {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 120px;
-            height: 90px;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 2px solid white;
         }
 
         .video-controls {
             position: absolute;
-            bottom: 15px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .video-btn {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 1.2rem;
             transition: all 0.2s;
         }
 
@@ -354,212 +377,239 @@
             top: 20px;
             right: 20px;
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             z-index: 1001;
             display: none;
-            max-width: 80%;
-        }
-
-        .incoming-call h4 {
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-
-        .incoming-call p {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            max-width: 300px;
         }
 
         .call-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .accept-call, .reject-call {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .accept-call {
             background: #42b883;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         .reject-call {
             background: #ff4757;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        /* Mobile Styles */
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .chat-container {
-                height: 100%;
+            .mobile-menu-toggle {
+                display: block;
             }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
+
             .sidebar {
-                width: 100%;
-                height: auto;
-                max-height: 40vh;
-                border-right: none;
-                border-bottom: 1px solid #e4e6ea;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+                width: 280px;
             }
-            
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
             .chat-area {
-                flex: 1;
-                min-height: 0;
+                width: 100%;
+                margin-left: 0;
             }
-            
+
+            .chat-header {
+                padding-left: 60px; /* Space for menu button */
+            }
+
+            .chat-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .chat-actions {
+                gap: 5px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
             .messages-container {
-                padding: 10px;
+                padding: 15px;
             }
-            
-            .message-bubble {
-                padding: 8px 10px;
-                font-size: 0.85rem;
+
+            .message-content {
+                max-width: 85%;
             }
-            
+
             .message-input-container {
-                padding: 10px;
+                padding: 10px 15px;
             }
-            
+
             .message-input {
-                padding: 8px 10px;
-                font-size: 0.85rem;
+                padding: 10px 12px;
+                font-size: 0.9rem;
             }
-            
+
             .send-btn {
-                padding: 8px 12px;
-                font-size: 0.85rem;
+                padding: 10px 15px;
+                font-size: 0.9rem;
             }
-            
+
             .video-call-container {
                 width: 95%;
-                height: 50%;
+                height: 80%;
             }
-            
+
             .video-local {
-                width: 80px;
-                height: 60px;
+                width: 120px;
+                height: 90px;
+                top: 10px;
+                right: 10px;
             }
-            
+
+            .video-controls {
+                bottom: 10px;
+                gap: 10px;
+            }
+
             .video-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 0.9rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .incoming-call {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 15px;
             }
         }
 
         @media (max-width: 480px) {
-            .sidebar-header {
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px 15px 10px 50px;
+            }
+
+            .chat-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .btn {
+                flex: 1;
+                text-align: center;
+                padding: 8px 4px;
+                font-size: 0.7rem;
+            }
+
+            .messages-container {
                 padding: 10px;
             }
-            
-            .user-avatar {
-                width: 32px;
-                height: 32px;
+
+            .message-bubble {
+                padding: 10px 12px;
                 font-size: 0.9rem;
             }
-            
-            .logout-btn {
-                padding: 6px 10px;
-                font-size: 0.7rem;
-            }
-            
-            .chat-header {
-                padding: 10px;
-            }
-            
-            .chat-header h2 {
-                font-size: 1rem;
-            }
-            
-            .btn {
-                padding: 4px 8px;
-                font-size: 0.7rem;
-            }
-            
-            .message-avatar {
-                width: 28px;
-                height: 28px;
-            }
-            
-            .message-bubble {
-                font-size: 0.8rem;
-            }
-            
+
             .message-info {
-                font-size: 0.6rem;
+                font-size: 0.7rem;
             }
-            
+
             .video-call-container {
-                height: 40%;
+                height: 85%;
+            }
+
+            .video-local {
+                width: 100px;
+                height: 75px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <div class="chat-container">
         <!-- Sidebar -->
-        <div class="main-content">
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <div class="user-info">
-                        <div class="user-avatar" id="currentUserAvatar"></div>
-                        <div>
-                            <div id="currentUsername">Loading...</div>
-                            <div style="font-size: 0.8rem; color: #666;">Online</div>
-                        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="currentUserAvatar"></div>
+                    <div>
+                        <div id="currentUsername">Loading...</div>
+                        <div style="font-size: 0.8rem; color: #666;">Online</div>
                     </div>
-                    <button class="logout-btn" onclick="logout()">Keluar</button>
                 </div>
-                
-                <div class="online-users">
-                    <h3>Pengguna Online</h3>
-                    <div id="onlineUsersList"></div>
+                <button class="logout-btn" onclick="logout()">Keluar</button>
+            </div>
+            
+            <div class="online-users">
+                <h3>Pengguna Online</h3>
+                <div id="onlineUsersList"></div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h2>Chat Room</h2>
+                <div class="chat-actions">
+                    <button class="btn btn-danger" onclick="clearAllMessages()">
+                        🗑️ Hapus Semua
+                    </button>
+                    <button class="btn btn-primary" onclick="startVideoCall()">
+                        📹 Video Call
+                    </button>
                 </div>
             </div>
 
-            <!-- Chat Area -->
-            <div class="chat-area">
-                <div class="chat-header">
-                    <h2>Chat Room</h2>
-                    <div class="chat-actions">
-                        <button class="btn btn-danger" onclick="clearAllMessages()">
-                            🗑️ Hapus
-                        </button>
-                        <button class="btn btn-primary" onclick="startVideoCall()">
-                            📹 Call
-                        </button>
-                    </div>
-                </div>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages akan ditampilkan di sini -->
+            </div>
 
-                <div class="messages-container" id="messagesContainer">
-                    <!-- Messages akan ditampilkan di sini -->
-                </div>
-
-                <div class="message-input-container">
-                    <form class="message-input-form" id="messageForm">
-                        <input 
-                            type="text" 
-                            class="message-input" 
-                            id="messageInput" 
-                            placeholder="Ketik pesan Anda..."
-                            maxlength="500"
-                            required
-                        >
-                        <button type="submit" class="send-btn">Kirim</button>
-                    </form>
-                </div>
+            <div class="message-input-container">
+                <form class="message-input-form" id="messageForm">
+                    <input 
+                        type="text" 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Ketik pesan Anda..."
+                        maxlength="500"
+                        required
+                    >
+                    <button type="submit" class="send-btn">Kirim</button>
+                </form>
             </div>
         </div>
     </div>
@@ -599,390 +649,673 @@
     
     <script>
         let socket;
-        let currentUser = null;
-        let onlineUsers = [];
-        let localStream = null;
-        let remoteStream = null;
-        let peerConnection = null;
-        let isCallActive = false;
-        let isMuted = false;
-        let isCameraOff = false;
-        let incomingCallData = null;
+let currentUser = null;
+let onlineUsers = [];
+let localStream = null;
+let remoteStream = null;
+let peerConnection = null;
+let isCallActive = false;
+let isMuted = false;
+let isCameraOff = false;
+let incomingCallData = null;
 
-        // WebRTC Configuration
-        const rtcConfig = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' }
-            ]
+// WebRTC Configuration
+const rtcConfig = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+    ]
+};
+
+// Mobile Sidebar Functions
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+}
+
+// Initialize app
+async function init() {
+    try {
+        const userResponse = await fetch('/user');
+        if (!userResponse.ok) {
+            window.location.href = '/';
+            return;
+        }
+        
+        currentUser = await userResponse.json();
+        document.getElementById('currentUsername').textContent = currentUser.username;
+        document.getElementById('currentUserAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+        
+        // Initialize Socket.IO
+        socket = io();
+        setupSocketEvents();
+        
+        // Load existing messages
+        loadMessages();
+        
+        // Tell server user is connected
+        socket.emit('userConnected', currentUser);
+        
+    } catch (error) {
+        console.error('Error initializing app:', error);
+        window.location.href = '/';
+    }
+}
+
+function setupSocketEvents() {
+    socket.on('userStatusUpdate', (users) => {
+        onlineUsers = users.filter(u => u.id !== currentUser.id);
+        updateOnlineUsersList();
+    });
+
+    socket.on('newMessage', (message) => {
+        displayMessage(message);
+        scrollToBottom();
+        showNotification(message);
+    });
+
+    socket.on('messagesCleared', () => {
+        document.getElementById('messagesContainer').innerHTML = '';
+    });
+
+    socket.on('messagesUpdated', (messages) => {
+        displayMessages(messages);
+    });
+
+    socket.on('incomingVideoCall', (data) => {
+        incomingCallData = data;
+        document.getElementById('callerName').textContent = data.fromUsername;
+        document.getElementById('incomingCall').style.display = 'block';
+        playRingtone();
+    });
+
+    socket.on('videoCallAnswered', async (data) => {
+        if (peerConnection) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+        }
+        stopRingtone();
+    });
+
+    socket.on('videoCallRejected', () => {
+        alert('Panggilan ditolak');
+        endCall();
+        stopRingtone();
+    });
+
+    socket.on('videoCallEnded', () => {
+        endCall();
+    });
+
+    socket.on('iceCandidate', async (data) => {
+        if (peerConnection) {
+            try {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+            } catch (error) {
+                console.error('Error adding ICE candidate:', error);
+            }
+        }
+    });
+
+    socket.on('userDisconnected', (userId) => {
+        if (isCallActive) {
+            // Check if the disconnected user was in call with us
+            endCall();
+        }
+    });
+
+    // Handle connection errors
+    socket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        showErrorMessage('Koneksi terputus. Mencoba menghubungkan kembali...');
+    });
+
+    socket.on('reconnect', () => {
+        showSuccessMessage('Terhubung kembali!');
+        if (currentUser) {
+            socket.emit('userConnected', currentUser);
+        }
+    });
+}
+
+async function loadMessages() {
+    try {
+        const response = await fetch('/messages');
+        const messages = await response.json();
+        displayMessages(messages);
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        showErrorMessage('Gagal memuat pesan');
+    }
+}
+
+function displayMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = '';
+    messages.forEach(message => displayMessage(message));
+    scrollToBottom();
+}
+
+function displayMessage(message) {
+    const container = document.getElementById('messagesContainer');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
+    
+    const timestamp = new Date(message.timestamp);
+    const timeString = timestamp.toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    const dateString = timestamp.toLocaleDateString('id-ID');
+    
+    messageDiv.innerHTML = `
+        <div class="message-avatar">${message.username.charAt(0).toUpperCase()}</div>
+        <div class="message-content">
+            <div class="message-bubble">
+                ${formatMessage(escapeHtml(message.text))}
+            </div>
+            <div class="message-info">
+                <span>${message.username}</span>
+                <span>•</span>
+                <span>${timeString}</span>
+                <span>•</span>
+                <span>${dateString}</span>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(messageDiv);
+}
+
+function formatMessage(text) {
+    // Format URLs as clickable links
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    text = text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    // Format line breaks
+    text = text.replace(/\n/g, '<br>');
+    
+    return text;
+}
+
+function updateOnlineUsersList() {
+    const container = document.getElementById('onlineUsersList');
+    container.innerHTML = '';
+    
+    if (onlineUsers.length === 0) {
+        container.innerHTML = '<div class="no-users">Tidak ada pengguna online</div>';
+        return;
+    }
+    
+    onlineUsers.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-item';
+        userDiv.innerHTML = `
+            <div class="user-status"></div>
+            <div class="user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                ${user.username.charAt(0).toUpperCase()}
+            </div>
+            <div class="user-name">${user.username}</div>
+            <button class="call-btn" onclick="callUser('${user.id}')" title="Panggil ${user.username}">
+                📞
+            </button>
+        `;
+        container.appendChild(userDiv);
+    });
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('messagesContainer');
+    container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Message form handling
+document.getElementById('messageForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+    
+    if (text && text.length <= 1000) { // Message length limit
+        socket.emit('sendMessage', { text });
+        input.value = '';
+        
+        // Auto-resize textarea
+        input.style.height = 'auto';
+    } else if (text.length > 1000) {
+        showErrorMessage('Pesan terlalu panjang (maksimal 1000 karakter)');
+    }
+    
+    // Close sidebar on mobile after sending message
+    if (window.innerWidth <= 768) {
+        closeSidebar();
+    }
+});
+
+// Auto-resize message input
+document.getElementById('messageInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+});
+
+// Clear all messages
+async function clearAllMessages() {
+    if (confirm('Apakah Anda yakin ingin menghapus semua pesan?')) {
+        try {
+            const response = await fetch('/messages', { method: 'DELETE' });
+            if (response.ok) {
+                showSuccessMessage('Semua pesan berhasil dihapus');
+            } else {
+                throw new Error('Failed to clear messages');
+            }
+        } catch (error) {
+            console.error('Error clearing messages:', error);
+            showErrorMessage('Gagal menghapus pesan');
+        }
+    }
+}
+
+// Logout function
+async function logout() {
+    if (isCallActive) {
+        endCall();
+    }
+    
+    try {
+        await fetch('/logout', { method: 'POST' });
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Error logging out:', error);
+        window.location.href = '/';
+    }
+}
+
+// Video Call Functions
+async function callUser(userId) {
+    const targetUser = onlineUsers.find(u => u.id === userId);
+    if (!targetUser) {
+        alert('Pengguna tidak ditemukan');
+        return;
+    }
+    
+    await startVideoCall(userId);
+}
+
+async function startVideoCall(targetUserId = null) {
+    if (onlineUsers.length === 0) {
+        alert('Tidak ada pengguna online untuk dipanggil');
+        return;
+    }
+
+    const targetId = targetUserId || onlineUsers[0].id;
+
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480 },
+            audio: { echoCancellation: true, noiseSuppression: true }
+        });
+
+        document.getElementById('localVideo').srcObject = localStream;
+        document.getElementById('videoCallModal').style.display = 'flex';
+        isCallActive = true;
+
+        // Create peer connection
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        
+        // Add local stream to peer connection
+        localStream.getTracks().forEach(track => {
+            peerConnection.addTrack(track, localStream);
+        });
+
+        // Handle remote stream
+        peerConnection.ontrack = (event) => {
+            remoteStream = event.streams[0];
+            document.getElementById('remoteVideo').srcObject = remoteStream;
         };
 
-        // Initialize app
-        async function init() {
-            try {
-                const userResponse = await fetch('/user');
-                if (!userResponse.ok) {
-                    window.location.href = '/';
-                    return;
-                }
-                
-                currentUser = await userResponse.json();
-                document.getElementById('currentUsername').textContent = currentUser.username;
-                document.getElementById('currentUserAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                
-                // Initialize Socket.IO
-                socket = io();
-                setupSocketEvents();
-                
-                // Load existing messages
-                loadMessages();
-                
-                // Tell server user is connected
-                socket.emit('userConnected', currentUser);
-                
-            } catch (error) {
-                console.error('Error initializing app:', error);
-                window.location.href = '/';
+        // Handle ICE candidates
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit('iceCandidate', {
+                    targetUserId: targetId,
+                    candidate: event.candidate
+                });
             }
-        }
+        };
 
-        function setupSocketEvents() {
-            socket.on('userStatusUpdate', (users) => {
-                onlineUsers = users.filter(u => u.id !== currentUser.id);
-                updateOnlineUsersList();
-            });
-
-            socket.on('newMessage', (message) => {
-                displayMessage(message);
-                scrollToBottom();
-            });
-
-            socket.on('messagesCleared', () => {
-                document.getElementById('messagesContainer').innerHTML = '';
-            });
-
-            socket.on('messagesUpdated', (messages) => {
-                displayMessages(messages);
-            });
-
-            socket.on('incomingVideoCall', (data) => {
-                incomingCallData = data;
-                document.getElementById('callerName').textContent = data.fromUsername;
-                document.getElementById('incomingCall').style.display = 'block';
-            });
-
-            socket.on('videoCallAnswered', async (data) => {
-                if (peerConnection) {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-                }
-            });
-
-            socket.on('videoCallRejected', () => {
-                alert('Panggilan ditolak');
+        // Handle connection state changes
+        peerConnection.onconnectionstatechange = () => {
+            if (peerConnection.connectionState === 'disconnected' || 
+                peerConnection.connectionState === 'failed') {
                 endCall();
-            });
-
-            socket.on('iceCandidate', async (data) => {
-                if (peerConnection) {
-                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-                }
-            });
-        }
-
-        async function loadMessages() {
-            try {
-                const response = await fetch('/messages');
-                const messages = await response.json();
-                displayMessages(messages);
-            } catch (error) {
-                console.error('Error loading messages:', error);
             }
-        }
+        };
 
-        function displayMessages(messages) {
-            const container = document.getElementById('messagesContainer');
-            container.innerHTML = '';
-            messages.forEach(message => displayMessage(message));
-            scrollToBottom();
-        }
+        // Create offer
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
 
-        function displayMessage(message) {
-            const container = document.getElementById('messagesContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
-            
-            const timestamp = new Date(message.timestamp);
-            const timeString = timestamp.toLocaleTimeString('id-ID', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            const dateString = timestamp.toLocaleDateString('id-ID');
-            
-            messageDiv.innerHTML = `
-                <div class="message-avatar">${message.username.charAt(0).toUpperCase()}</div>
-                <div class="message-content">
-                    <div class="message-bubble">
-                        ${escapeHtml(message.text)}
-                    </div>
-                    <div class="message-info">
-                        <span>${message.username}</span>
-                        <span>•</span>
-                        <span>${timeString}</span>
-                        <span>•</span>
-                        <span>${dateString}</span>
-                    </div>
-                </div>
-            `;
-            
-            container.appendChild(messageDiv);
-        }
-
-        function updateOnlineUsersList() {
-            const container = document.getElementById('onlineUsersList');
-            container.innerHTML = '';
-            
-            onlineUsers.forEach(user => {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'user-item';
-                userDiv.innerHTML = `
-                    <div class="user-status"></div>
-                    <div class="user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">
-                        ${user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <div>${user.username}</div>
-                `;
-                container.appendChild(userDiv);
-            });
-        }
-
-        function scrollToBottom() {
-            const container = document.getElementById('messagesContainer');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Message form handling
-        document.getElementById('messageForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            
-            if (text) {
-                socket.emit('sendMessage', { text });
-                input.value = '';
-            }
+        // Send call request
+        socket.emit('videoCallRequest', {
+            targetUserId: targetId,
+            offer: offer
         });
 
-        // Clear all messages
-        async function clearAllMessages() {
-            if (confirm('Apakah Anda yakin ingin menghapus semua pesan?')) {
-                try {
-                    await fetch('/messages', { method: 'DELETE' });
-                } catch (error) {
-                    console.error('Error clearing messages:', error);
-                }
-            }
-        }
+        // Show calling status
+        showCallingStatus(targetId);
 
-        // Logout function
-        async function logout() {
-            try {
-                await fetch('/logout', { method: 'POST' });
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Error logging out:', error);
-                window.location.href = '/';
-            }
-        }
+    } catch (error) {
+        console.error('Error starting video call:', error);
+        alert('Gagal memulai video call. Pastikan kamera dan mikrofon dapat diakses.');
+        endCall();
+    }
+}
 
-        // Video Call Functions
-        async function startVideoCall() {
-            if (onlineUsers.length === 0) {
-                alert('Tidak ada pengguna online untuk dipanggil');
-                return;
-            }
+function showCallingStatus(targetUserId) {
+    const targetUser = onlineUsers.find(u => u.id === targetUserId);
+    const statusElement = document.getElementById('callStatus');
+    if (statusElement && targetUser) {
+        statusElement.textContent = `Memanggil ${targetUser.username}...`;
+    }
+}
 
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                });
+async function acceptCall() {
+    try {
+        document.getElementById('incomingCall').style.display = 'none';
+        stopRingtone();
+        
+        localStream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480 },
+            audio: { echoCancellation: true, noiseSuppression: true }
+        });
 
-                document.getElementById('localVideo').srcObject = localStream;
-                document.getElementById('videoCallModal').style.display = 'flex';
-                isCallActive = true;
+        document.getElementById('localVideo').srcObject = localStream;
+        document.getElementById('videoCallModal').style.display = 'flex';
+        isCallActive = true;
 
-                // Create peer connection
-                peerConnection = new RTCPeerConnection(rtcConfig);
-                
-                // Add local stream to peer connection
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
+        // Create peer connection
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        
+        // Add local stream
+        localStream.getTracks().forEach(track => {
+            peerConnection.addTrack(track, localStream);
+        });
 
-                // Handle remote stream
-                peerConnection.ontrack = (event) => {
-                    remoteStream = event.streams[0];
-                    document.getElementById('remoteVideo').srcObject = remoteStream;
-                };
+        // Handle remote stream
+        peerConnection.ontrack = (event) => {
+            remoteStream = event.streams[0];
+            document.getElementById('remoteVideo').srcObject = remoteStream;
+        };
 
-                // Handle ICE candidates
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        socket.emit('iceCandidate', {
-                            targetUserId: onlineUsers[0].id, // Call first online user
-                            candidate: event.candidate
-                        });
-                    }
-                };
-
-                // Create offer
-                const offer = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offer);
-
-                // Send call request to first online user
-                socket.emit('videoCallRequest', {
-                    targetUserId: onlineUsers[0].id,
-                    offer: offer
-                });
-
-            } catch (error) {
-                console.error('Error starting video call:', error);
-                alert('Gagal memulai video call. Pastikan kamera dan mikrofon dapat diakses.');
-            }
-        }
-
-        async function acceptCall() {
-            try {
-                document.getElementById('incomingCall').style.display = 'none';
-                
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                });
-
-                document.getElementById('localVideo').srcObject = localStream;
-                document.getElementById('videoCallModal').style.display = 'flex';
-                isCallActive = true;
-
-                // Create peer connection
-                peerConnection = new RTCPeerConnection(rtcConfig);
-                
-                // Add local stream
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
-
-                // Handle remote stream
-                peerConnection.ontrack = (event) => {
-                    remoteStream = event.streams[0];
-                    document.getElementById('remoteVideo').srcObject = remoteStream;
-                };
-
-                // Handle ICE candidates
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        socket.emit('iceCandidate', {
-                            targetUserId: incomingCallData.from,
-                            candidate: event.candidate
-                        });
-                    }
-                };
-
-                // Set remote description and create answer
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-
-                // Send answer
-                socket.emit('videoCallAnswer', {
+        // Handle ICE candidates
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit('iceCandidate', {
                     targetUserId: incomingCallData.from,
-                    answer: answer
-                });
-
-            } catch (error) {
-                console.error('Error accepting call:', error);
-                alert('Gagal menerima panggilan');
-            }
-        }
-
-        function rejectCall() {
-            document.getElementById('incomingCall').style.display = 'none';
-            if (incomingCallData) {
-                socket.emit('videoCallReject', {
-                    targetUserId: incomingCallData.from
+                    candidate: event.candidate
                 });
             }
-        }
+        };
 
-        function endCall() {
-            isCallActive = false;
-            document.getElementById('videoCallModal').style.display = 'none';
-            
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
+        // Handle connection state changes
+        peerConnection.onconnectionstatechange = () => {
+            if (peerConnection.connectionState === 'disconnected' || 
+                peerConnection.connectionState === 'failed') {
+                endCall();
             }
-            
-            if (peerConnection) {
-                peerConnection.close();
-                peerConnection = null;
-            }
-            
-            document.getElementById('localVideo').srcObject = null;
-            document.getElementById('remoteVideo').srcObject = null;
-            
-            isMuted = false;
-            isCameraOff = false;
+        };
+
+        // Set remote description and create answer
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+
+        // Send answer
+        socket.emit('videoCallAnswer', {
+            targetUserId: incomingCallData.from,
+            answer: answer
+        });
+
+    } catch (error) {
+        console.error('Error accepting call:', error);
+        alert('Gagal menerima panggilan');
+        rejectCall();
+    }
+}
+
+function rejectCall() {
+    document.getElementById('incomingCall').style.display = 'none';
+    stopRingtone();
+    
+    if (incomingCallData) {
+        socket.emit('videoCallReject', {
+            targetUserId: incomingCallData.from
+        });
+        incomingCallData = null;
+    }
+}
+
+function endCall() {
+    isCallActive = false;
+    document.getElementById('videoCallModal').style.display = 'none';
+    document.getElementById('incomingCall').style.display = 'none';
+    stopRingtone();
+    
+    // Notify other user
+    if (socket && incomingCallData) {
+        socket.emit('videoCallEnd', {
+            targetUserId: incomingCallData.from
+        });
+    }
+    
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+    
+    document.getElementById('localVideo').srcObject = null;
+    document.getElementById('remoteVideo').srcObject = null;
+    
+    isMuted = false;
+    isCameraOff = false;
+    updateVideoControls();
+    incomingCallData = null;
+}
+
+function toggleMute() {
+    if (localStream) {
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+            audioTrack.enabled = !audioTrack.enabled;
+            isMuted = !audioTrack.enabled;
             updateVideoControls();
         }
+    }
+}
 
-        function toggleMute() {
-            if (localStream) {
-                const audioTrack = localStream.getAudioTracks()[0];
-                if (audioTrack) {
-                    audioTrack.enabled = !audioTrack.enabled;
-                    isMuted = !audioTrack.enabled;
-                    updateVideoControls();
-                }
-            }
+function toggleCamera() {
+    if (localStream) {
+        const videoTrack = localStream.getVideoTracks()[0];
+        if (videoTrack) {
+            videoTrack.enabled = !videoTrack.enabled;
+            isCameraOff = !videoTrack.enabled;
+            updateVideoControls();
         }
+    }
+}
 
-        function toggleCamera() {
-            if (localStream) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                if (videoTrack) {
-                    videoTrack.enabled = !videoTrack.enabled;
-                    isCameraOff = !videoTrack.enabled;
-                    updateVideoControls();
-                }
-            }
+function updateVideoControls() {
+    const muteBtn = document.getElementById('muteBtn');
+    const cameraBtn = document.getElementById('cameraBtn');
+    
+    if (muteBtn) {
+        muteBtn.textContent = isMuted ? '🔇' : '🎤';
+        muteBtn.style.background = isMuted ? '#ff4757' : '#ffa500';
+        muteBtn.title = isMuted ? 'Unmute' : 'Mute';
+    }
+    
+    if (cameraBtn) {
+        cameraBtn.textContent = isCameraOff ? '📹❌' : '📹';
+        cameraBtn.style.background = isCameraOff ? '#ff4757' : '#42b883';
+        cameraBtn.title = isCameraOff ? 'Turn On Camera' : 'Turn Off Camera';
+    }
+}
+
+// Notification functions
+function showNotification(message) {
+    if (message.userId !== currentUser.id && document.hidden) {
+        if (Notification.permission === 'granted') {
+            new Notification(`Pesan dari ${message.username}`, {
+                body: message.text.substring(0, 100),
+                icon: '/favicon.ico'
+            });
         }
+    }
+}
 
-        function updateVideoControls() {
-            const muteBtn = document.getElementById('muteBtn');
-            const cameraBtn = document.getElementById('cameraBtn');
-            
-            muteBtn.textContent = isMuted ? '🔇' : '🎤';
-            muteBtn.style.background = isMuted ? '#ff4757' : '#ffa500';
-            
-            cameraBtn.textContent = isCameraOff ? '📹❌' : '📹';
-            cameraBtn.style.background = isCameraOff ? '#ff4757' : '#42b883';
+function showErrorMessage(text) {
+    showToast(text, 'error');
+}
+
+function showSuccessMessage(text) {
+    showToast(text, 'success');
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+// Ringtone functions
+let ringtoneAudio = null;
+
+function playRingtone() {
+    if (!ringtoneAudio) {
+        ringtoneAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkFJnfJ8N2QQAoUXrTp66hVFApGn+DyvmAYBT2R2fLFeCkF');
+    }
+    
+    ringtoneAudio.loop = true;
+    ringtoneAudio.play().catch(e => console.log('Could not play ringtone:', e));
+}
+
+function stopRingtone() {
+    if (ringtoneAudio) {
+        ringtoneAudio.pause();
+        ringtoneAudio.currentTime = 0;
+    }
+}
+
+// Request notification permission
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+// Initialize app when page loads
+window.addEventListener('load', () => {
+    init();
+    requestNotificationPermission();
+});
+
+// Handle page visibility change
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isCallActive) {
+        // Optional: Handle when user switches tabs during call
+    }
+});
+
+// Handle beforeunload
+window.addEventListener('beforeunload', (e) => {
+    if (isCallActive) {
+        e.preventDefault();
+        e.returnValue = 'Anda sedang dalam panggilan video. Yakin ingin meninggalkan halaman?';
+    }
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+        
+        if (sidebar && overlay && !sidebar.contains(e.target) && 
+            e.target !== toggleBtn && !toggleBtn?.contains(e.target)) {
+            closeSidebar();
         }
+    }
+});
 
-        // Initialize app when page loads
-        window.addEventListener('load', init);
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        closeSidebar();
+    }
+});
 
-        // Handle page visibility change
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && isCallActive) {
-                // Optional: Handle when user switches tabs during call
-            }
-        });
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + Enter to send message
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const messageForm = document.getElementById('messageForm');
+        if (messageForm) {
+            messageForm.dispatchEvent(new Event('submit'));
+        }
+    }
+    
+    // Escape to close call
+    if (e.key === 'Escape' && isCallActive) {
+        endCall();
+    }
+    
+    // Escape to close incoming call dialog
+    if (e.key === 'Escape' && document.getElementById('incomingCall').style.display === 'block') {
+        rejectCall();
+    }
+});
+
+// Focus message input when page loads
+window.addEventListener('load', () => {
+    const messageInput = document.getElementById('messageInput');
+    if (messageInput) {
+        messageInput.focus();
+    }
+});
     </script>
-</body>
+ </body>
 </html>
